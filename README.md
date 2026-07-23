@@ -35,9 +35,74 @@ STEP-5: Display the obtained cipher text.
 
 
 Program:
+```
+#include <stdio.h>
+#include <string.h>
 
+int main()
+{
+    int key[3][3];
+    int plain[100], cipher[100];
+    char msg[100];
+    int i, j, k, sum, len;
 
+    printf("Enter Plain Text (UPPERCASE): ");
+    scanf("%s", msg);
+
+    printf("Enter the 3x3 Key Matrix:\n");
+    for(i = 0; i < 3; i++)
+    {
+        for(j = 0; j < 3; j++)
+        {
+            scanf("%d", &key[i][j]);
+        }
+    }
+
+    len = strlen(msg);
+
+    // Padding with X if length is not multiple of 3
+    while(len % 3 != 0)
+    {
+        msg[len] = 'X';
+        len++;
+    }
+    msg[len] = '\0';
+
+    // Convert letters to numbers
+    for(i = 0; i < len; i++)
+    {
+        plain[i] = msg[i] - 'A';
+    }
+
+    // Encrypt block by block
+    for(k = 0; k < len; k += 3)
+    {
+        for(i = 0; i < 3; i++)
+        {
+            sum = 0;
+            for(j = 0; j < 3; j++)
+            {
+                sum += key[i][j] * plain[k + j];
+            }
+            cipher[k + i] = sum % 26;
+        }
+    }
+
+    printf("\nCipher Text: ");
+    for(i = 0; i < len; i++)
+    {
+        printf("%c", cipher[i] + 'A');
+    }
+
+    return 0;
+}
+
+```
 
 
 
 Output:
+<img width="1847" height="797" alt="OUTPUT EX 2" src="https://github.com/user-attachments/assets/3911d6fb-72df-4032-9426-ef9352d48874" />
+
+
+
