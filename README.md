@@ -101,7 +101,7 @@ int main()
 
 
 
-Output:
+OUTPUT:
 <img width="1847" height="797" alt="OUTPUT EX 2" src="https://github.com/user-attachments/assets/3911d6fb-72df-4032-9426-ef9352d48874" />
 
 
