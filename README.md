@@ -35,12 +35,173 @@ STEP-5: Display the obtained cipher text.
 
 
 Program:
+```
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
+char matrix[5][5];
+
+// Function to generate Playfair matrix
+void generateMatrix(char key[]) {
+    int used[26] = {0};
+    int i, j, k = 0;
+
+    used['J' - 'A'] = 1; // Merge J with I
+
+    for(i = 0; key[i] != '\0'; i++) {
+        char ch = toupper(key[i]);
+        if(ch == 'J')
+            ch = 'I';
+
+        if(ch >= 'A' && ch <= 'Z' && !used[ch - 'A']) {
+            matrix[k / 5][k % 5] = ch;
+            used[ch - 'A'] = 1;
+            k++;
+        }
+    }
+
+    for(i = 0; i < 26; i++) {
+        if(!used[i]) {
+            matrix[k / 5][k % 5] = i + 'A';
+            k++;
+        }
+    }
+}
+
+// Display matrix
+void displayMatrix() {
+    printf("\nPlayfair Matrix:\n");
+    for(int i = 0; i < 5; i++) {
+        for(int j = 0; j < 5; j++)
+            printf("%c ", matrix[i][j]);
+        printf("\n");
+    }
+}
+
+// Find position of character
+void findPosition(char ch, int *row, int *col) {
+    if(ch == 'J')
+        ch = 'I';
+
+    for(int i = 0; i < 5; i++) {
+        for(int j = 0; j < 5; j++) {
+            if(matrix[i][j] == ch) {
+                *row = i;
+                *col = j;
+                return;
+            }
+        }
+    }
+}
+
+// Prepare plaintext
+void prepareText(char text[], char prepared[]) {
+    int i = 0, k = 0;
+
+    while(text[i] != '\0') {
+        char a = toupper(text[i]);
+        if(a == 'J')
+            a = 'I';
+
+        if(a < 'A' || a > 'Z') {
+            i++;
+            continue;
+        }
+
+        prepared[k++] = a;
+
+        i++;
+
+        while(text[i] != '\0' && !isalpha(text[i]))
+            i++;
+
+        if(text[i] == '\0')
+            break;
+
+        char b = toupper(text[i]);
+        if(b == 'J')
+            b = 'I';
+
+        if(a == b)
+            prepared[k++] = 'X';
+    }
+
+    prepared[k] = '\0';
+
+    if(strlen(prepared) % 2 != 0) {
+        prepared[k] = 'X';
+        prepared[k + 1] = '\0';
+    }
+}
+
+// Encrypt
+void encrypt(char text[]) {
+    printf("\nEncrypted Text: ");
+
+    for(int i = 0; text[i] != '\0'; i += 2) {
+        int r1, c1, r2, c2;
+
+        findPosition(text[i], &r1, &c1);
+        findPosition(text[i + 1], &r2, &c2);
+
+        if(r1 == r2) {
+            printf("%c%c",
+                   matrix[r1][(c1 + 1) % 5],
+                   matrix[r2][(c2 + 1) % 5]);
+        }
+        else if(c1 == c2) {
+            printf("%c%c",
+                   matrix[(r1 + 1) % 5][c1],
+                   matrix[(r2 + 1) % 5][c2]);
+        }
+        else {
+            printf("%c%c",
+                   matrix[r1][c2],
+                   matrix[r2][c1]);
+        }
+    }
+
+    printf("\n");
+}
+
+int main() {
+    char key[100];
+    char plaintext[100];
+    char prepared[200];
+
+    printf("Enter Key: ");
+    scanf("%s", key);
+
+    getchar();
+
+    printf("Enter Plaintext: ");
+    fgets(plaintext, sizeof(plaintext), stdin);
+
+    plaintext[strcspn(plaintext, "\n")] = '\0';
+
+    generateMatrix(key);
+    displayMatrix();
+
+    prepareText(plaintext, prepared);
+
+    printf("\nPrepared Plaintext: %s\n", prepared);
+
+    encrypt(prepared);
+
+    return 0;
+}
+
+```
 
 
 
 OUTPUT:
+<img width="1542" height="667" alt="playfair pic" src="https://github.com/user-attachments/assets/a2bee55d-d9f3-4eb6-8ec7-c6f9f98e7317" />
 
+RESULT:
+
+The Playfair Cipher program successfully encrypted the given plaintext using the specified key matrix by processing the text in digraphs and applying the Playfair encryption rules. The corresponding ciphertext was generated correctly.
 
 
 
